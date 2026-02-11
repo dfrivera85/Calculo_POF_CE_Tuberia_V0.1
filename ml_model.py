@@ -7,14 +7,14 @@ class DefectDepthEstimator:
     def __init__(self, random_state=42):
         self.model = RandomForestRegressor(random_state=random_state, n_estimators=1000)
         self.label_encoders = {}
-        self.categorical_cols = ['tipo_suelo', 'tipo_recubrimiento']
+        self.categorical_cols = ['tipo_suelo', 'tipo_recubrimiento','cp_potencial_on_mv']
         self.feature_cols = [
             'resistividad_suelo_ohm_cm', 
-            'cp_potencial_on_mv', 
             'interferencia_dc', 
             'edad_recubrimiento_anos',
             'tipo_suelo',
-            'tipo_recubrimiento'
+            'tipo_recubrimiento',
+            'cp_potencial_on_mv'
         ]
         self.target_col = 'profundidad_mm'
         self.field_col = 'profundidad_campo_mm'

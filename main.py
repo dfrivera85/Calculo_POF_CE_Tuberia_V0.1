@@ -128,7 +128,7 @@ def run_simulation(dfs, ili_date, target_date, tolerances_df, detection_threshol
     # 2. ILI Data (where no field)
     # detecting tolerance based on defect type
     # map defect types to tolerance values
-    defect_types = master_df['tipo_defecto'].fillna('General')
+    defect_types = master_df['tipo_defecto'].fillna('GENE')
     ili_tols_fraction = defect_types.map(tol_dict).fillna(default_tol).values
     # ILI Std Dev = Tolerance * Depth? Or Tolerance * Thickness? OR just Tolerance (which is 10%... of what?)
     # "Tolerancias de dimensionamiento... 10%". Usually means +/- 10% of Depth with 80% confidence -> implies std dev logic.

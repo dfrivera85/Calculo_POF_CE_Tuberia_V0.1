@@ -27,7 +27,7 @@ class TestPOFSimulation(unittest.TestCase):
             'profundidad_mm': [2.0],
             'ancho': [10],
             'largo': [20],
-            'tipo_defecto': ['General']
+            'tipo_defecto': ['GENE']
         })
         
         # 3. Environment (Needs to cover distance)
@@ -50,12 +50,12 @@ class TestPOFSimulation(unittest.TestCase):
             'profundidad_campo_mm': [2.2], # Slightly deeper than ILI (2.0)
             'ancho_campo_mm': [10],
             'largo_campo_mm': [20],
-            'tipo_defecto_campo': ['General']
+            'tipo_defecto_campo': ['GENE']
         })
         
         # Tolerances
         self.tolerances_df = pd.DataFrame({
-            'Defect Type': ['General'],
+            'Defect Type': ['GENE'],
             'Tolerance': [0.10]
         })
         

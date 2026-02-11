@@ -43,7 +43,16 @@ def load_single_file(file_source, filename):
         return None
 
     try:
-        df = pd.read_csv(file_source)
+        # Try default encoding (utf-8) first
+        try:
+            df = pd.read_csv(file_source)
+        except UnicodeDecodeError:
+            # Fallback to latin1 if utf-8 fails
+            logging.warning(f"UnicodeDecodeError for {filename}. Retrying with latin1 encoding.")
+            if hasattr(file_source, 'seek'):
+                file_source.seek(0)
+            df = pd.read_csv(file_source, encoding='latin1')
+            
         validate_columns(df, filename)
         logging.info(f"Successfully loaded {filename} with shape {df.shape}")
         return df
@@ -114,12 +123,12 @@ def create_master_dataframe(dfs):
     juntas = dfs.get('juntas_soldadura').sort_values('distancia_inicio_m').reset_index(drop=True)
     anomalias = dfs.get('anomalias').sort_values('distancia_m').reset_index(drop=True)
     
-    juntas.to_csv('juntas_soldadura.csv', index=False)
-    anomalias.to_csv('anomalias.csv', index=False)
+    #juntas.to_csv('juntas_soldadura.csv', index=False)
+    #anomalias.to_csv('anomalias.csv', index=False)
 
     # Ensure merge keys are numeric
-    anomalias['distancia_m'] = pd.to_numeric(anomalias['distancia_m'], errors='coerce')
-    juntas['distancia_inicio_m'] = pd.to_numeric(juntas['distancia_inicio_m'], errors='coerce')
+    anomalias['distancia_m'] = pd.to_numeric(anomalias['distancia_m'], errors='coerce').astype(float)
+    juntas['distancia_inicio_m'] = pd.to_numeric(juntas['distancia_inicio_m'], errors='coerce').astype(float)
     
     # Drop rows with invalid keys (NaN after coercion)
     #anomalias = anomalias.dropna(subset=['distancia_m'])
@@ -249,6 +258,12 @@ def create_master_dataframe(dfs):
             tolerance=2, 
             suffixes=('', '_field')
         )
+
+    # Ensure field data columns exist even if no file loaded or merge failed
+    field_cols = ['profundidad_campo_mm', 'ancho_campo_mm', 'largo_campo_mm', 'tipo_defecto_campo']
+    for col in field_cols:
+        if col not in master_df.columns:
+            master_df[col] = pd.NA
 
     ##debugginf - borrar
     master_df.to_csv('master_df.csv', index=False)

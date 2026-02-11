@@ -128,7 +128,7 @@ def main():
             
             # Default Tolerances Table
             default_tolerances = pd.DataFrame({
-                "Defect Type": ["General", "Pitting", "Axial Grooving", "Circumferential Grooving", "Pinhole", "Axial Slotting", "Circumferential Slotting"],
+                "Defect Type": ["GENE", "PITT", "AXGR", "CIGR", "PINH", "AXSL", "CISL"],
                 "Tolerance": [0.10, 0.10, 0.15, 0.15, 0.10, 0.15, 0.10]
             })
             

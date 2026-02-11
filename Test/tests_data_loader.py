@@ -28,7 +28,7 @@ class TestDataLoader(unittest.TestCase):
             'profundidad_mm': [1.5, 2.0, 1.1],
             'ancho': [10, 20, 10],
             'largo': [10, 20, 15],
-            'tipo_defecto': ['General', 'Pitting', 'General']
+            'tipo_defecto': ['GENE', 'PITT', 'GENE']
         }
         pd.DataFrame(self.anomalias_data).to_csv(os.path.join(self.test_dir, 'anomalias.csv'), index=False)
         

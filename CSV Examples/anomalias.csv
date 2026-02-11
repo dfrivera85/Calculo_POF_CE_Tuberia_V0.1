@@ -1,5 +1,5 @@
 distancia_m,profundidad_mm,corrida_ILI,tipo_defecto,largo,ancho,latitud,longitud,posicion_horaria_hh_mm,tipo_anomalia,posicion_pared,reduccion_diametro_o_deformacion_porcentaje,comentarios,junta_anterior_m,junta_posterior_m,estado_A_I_R
-10.893,1.8,ROSEN_2019,Pitting,19,21,3.782118731,-71.45074959,12:00,corrosion,EXT,na,na,3,9,A
+10.893,1.8,ROSEN_2019,PITT,19,21,3.782118731,-71.45074959,12:00,corrosion,EXT,na,na,3,9,A
 18.986,1.4,ROSEN_2019,Circumferential Grooving,17,37,3.782052405,-71.45078792,13:00,corrosion,EXT,na,na,3,9,A
 19.01,1.1,ROSEN_2019,Pitting,19,25,3.782052208,-71.45078804,14:00,corrosion,EXT,na,na,3,9,A
 19.087,1.4,ROSEN_2019,Pitting,14,25,3.782051577,-71.4507884,15:00,corrosion,EXT,na,na,3,9,A
