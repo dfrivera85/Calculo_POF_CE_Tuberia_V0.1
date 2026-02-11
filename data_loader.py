@@ -15,7 +15,7 @@ REQUIRED_COLUMNS = {
     'interferencia.csv': ['distancia_inicio_m', 'distancia_fin_m', 'interferencia_dc'],
     'tipo_recubrimiento.csv': ['distancia_inicio_m', 'distancia_fin_m', 'tipo_recubrimiento'],
     'edad_recubrimiento.csv': ['distancia_inicio_m', 'distancia_fin_m', 'edad_recubrimiento_anos'],
-    'cgr_corrosion_externa.csv': ['distancia_inicio_m', 'distancia_fin_m', 'tasa_corrosion_mm_ano'],
+    'cgr_corrosion_externa.csv': ['distancia_inicio_m', 'distancia_fin_m', 'tasa_corrosion_mm_ano', 'desviacion_estandar_corrosion_mm_ano'],
     'inspecciones_directas.csv': ['distancia_m', 'profundidad_campo_mm', 'ancho_campo_mm', 'largo_campo_mm', 'tipo_defecto_campo']
 }
 

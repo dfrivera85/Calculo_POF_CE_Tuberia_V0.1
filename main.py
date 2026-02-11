@@ -197,8 +197,9 @@ def run_simulation(dfs, ili_date, target_date, tolerances_df, detection_threshol
     # Storage
     pof_history = []
     
-    # Corrosion Rates
+    # Corrosion Rates and Std Dev
     corrosion_rates = master_df['tasa_corrosion_mm_ano'].fillna(0.1).values # Default 0.1 mm/yr
+    std_dev_corrosion = master_df['desviacion_estandar_corrosion_mm_ano'].fillna(0.0).values # Default 0.0 mm/yr
     
     # Pipe Props
     pressures = master_df['presion'].fillna(0).values # Ensure pressure exists
@@ -241,11 +242,13 @@ def run_simulation(dfs, ili_date, target_date, tolerances_df, detection_threshol
         
         # 2. Grow Defects (for next step)
         if yr_idx < years[-1]:
-            current_depths, current_lengths = growth_model.grow_defects(
+            current_depths, current_lengths, current_std_devs = growth_model.grow_defects(
                 current_depths,
                 current_lengths,
                 corrosion_rates,
+                current_std_devs,
                 thickness, # Max depth limit
+                std_dev_corrosion,
                 time_step=1.0
             )
             # Std Dev growth? Uncertainty grows with time usually.
