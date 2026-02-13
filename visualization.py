@@ -37,6 +37,18 @@ st.markdown("""
         background-color: #1f77b4;
         color: white;
     }
+    /* Make File Uploader Smaller/Compact */
+    [data-testid='stFileUploader'] section {
+        padding: 0.5rem;
+        min-height: 0px;
+    }
+    [data-testid='stFileUploader'] section > div {
+        padding-top: 1px;
+        padding-bottom: 1px;
+    }
+    [data-testid='stFileUploader'] {
+        margin-bottom: 0.5rem;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -147,8 +159,62 @@ def main():
                 use_container_width=True,
                 height=250
             )
-
         st.divider()
+
+        # --- Cargue de Anomalias, Validacion ILI y Calibracion ILI ---
+        st.subheader("Cargue de Pipetally de Ultimas Corridas ILI")
+        col_input3, col_input4, col_input5, col_input6 = st.columns([1, 1.2, 1.5, 1], gap="small")
+        
+        with col_input3:
+            st.subheader("Pipetally")
+            st.file_uploader("Cargue el archivo de Pipetally Actual", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de anomalías (Dataframe).")
+            st.file_uploader("Cargue el archivo de Pipetally Previo 1", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de anomalías (Dataframe).")
+            st.file_uploader("Cargue el archivo de Pipetally Previo 2", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de anomalías (Dataframe).")
+            st.file_uploader("Cargue el archivo de Pipetally Previo 3", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de anomalías (Dataframe).")
+        
+        with col_input4:
+            st.subheader("Desviaciones ILI-Campo")
+            st.file_uploader("Cargue desviaciones ILI-Campo Actual", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de validación de ILI (Dataframe).")
+            st.file_uploader("Cargue desviaciones ILI-Campo Previo 1", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de validación de ILI (Dataframe).")
+            st.file_uploader("Cargue desviaciones ILI-Campo Previo 2", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de validación de ILI (Dataframe).")
+            st.file_uploader("Cargue desviaciones ILI-Campo Previo 3", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de validación de ILI (Dataframe).")
+
+        with col_input5:
+            st.subheader("Validacion ILI (Nivel 2 y 3)")
+            col_input5_1, col_input5_2 = st.columns([0.5, 0.5], vertical_alignment="center")
+            with col_input5_1:
+                st.button("Validar ILI Actual")
+            with col_input5_2:
+                st.image("CSV Examples/test.jpg")
+            
+            col_input5_3, col_input5_4 = st.columns([0.5, 0.5], vertical_alignment="center")
+            with col_input5_3:
+                st.button("Validar ILI Previo 1")
+            with col_input5_4:
+                st.image("CSV Examples/test.jpg")
+
+            col_input5_5, col_input5_6 = st.columns([0.5, 0.5], vertical_alignment="center")
+            with col_input5_5:
+                st.button("Validar ILI Previo 2")
+            with col_input5_6:
+                st.image("CSV Examples/test.jpg")
+
+            col_input5_7, col_input5_8 = st.columns([0.5, 0.5], vertical_alignment="center")
+            with col_input5_7:
+                st.button("Validar ILI Previo 3")
+            with col_input5_8:
+                st.image("CSV Examples/test.jpg")
+
+        with col_input6:
+            st.subheader("Tasas de corrosion")
+            cgr_method = st.radio("Seleccione Metodo de Calculo", ["Cargue CGR Externo", "Calcular CGR"])
+            if cgr_method == "Calcular CGR":
+                st.button("Calcular CGR")
+            elif cgr_method == "Cargue CGR Externo":
+                st.file_uploader("Cargue el archivo de Tasas de corrosion", type="csv")
+        
+        st.divider()
+        
         run_btn = st.button("EJECUTAR ANALISIS 🚀", type="primary", disabled=(len(missing) > 0))
 
         # --- PROCESS LOGIC ---
