@@ -114,15 +114,8 @@ def main():
             # Convert list of uploaded files to dict {filename: file_obj}
             file_dict = {f.name: f for f in uploaded_files} if uploaded_files else {}
             
-            # Check for missing files
-            required_files = set(data_loader.REQUIRED_COLUMNS.keys())
-            uploaded_filenames = set(file_dict.keys())
-            missing = required_files - uploaded_filenames
-            
-            if missing:
-                st.warning(f"Faltan {len(missing)} archivos: {', '.join(missing)}")
-            else:
-                st.success("¡Todos los archivos requeridos han sido cargados! ✅")
+            # Placeholder for validation messages (populated after all uploaders are rendered)
+            validation_placeholder = st.empty()
 
         with col_input2:
             st.subheader("2. Configuración de la simulación")
@@ -167,7 +160,10 @@ def main():
         
         with col_input3:
             st.subheader("Pipetally")
-            st.file_uploader("Cargue el archivo de Pipetally Actual", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de anomalías (Dataframe).")
+            pipetally_actual_file = st.file_uploader("Cargue el archivo de Pipetally Actual", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de anomalías (Dataframe).")
+            if pipetally_actual_file:
+                file_dict['anomalias.csv'] = pipetally_actual_file
+
             st.file_uploader("Cargue el archivo de Pipetally Previo 1", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de anomalías (Dataframe).")
             st.file_uploader("Cargue el archivo de Pipetally Previo 2", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de anomalías (Dataframe).")
             st.file_uploader("Cargue el archivo de Pipetally Previo 3", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de anomalías (Dataframe).")
@@ -214,6 +210,19 @@ def main():
                 st.file_uploader("Cargue el archivo de Tasas de corrosion", type="csv")
         
         st.divider()
+
+        # --- VALIDATION LOGIC (Consolidated) ---
+        # Check for missing files
+        required_files = set(data_loader.REQUIRED_COLUMNS.keys())
+        uploaded_filenames = set(file_dict.keys())
+        missing = required_files - uploaded_filenames
+        
+        # Update the placeholder in col_input1
+        with validation_placeholder.container():
+            if missing:
+                st.warning(f"Faltan {len(missing)} archivos: {', '.join(missing)}")
+            else:
+                st.success("¡Todos los archivos requeridos han sido cargados! ✅")
         
         run_btn = st.button("EJECUTAR ANALISIS 🚀", type="primary", disabled=(len(missing) > 0))
 
