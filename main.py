@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 import logging
+import scipy.stats as stats
 
 # Local imports
 import data_loader
@@ -97,6 +98,17 @@ def run_simulation(dfs, ili_date, target_date, tolerances_df, detection_threshol
     # Convert tolerances to dictionary for fast lookup {Type: Tolerance}
     # Tolerance is fractional (e.g. 0.10 for 10%)
     tol_dict = dict(zip(tolerances_df['Defect Type'], tolerances_df['Tolerance']))
+    
+    # Extract Confidence Level (default 0.80 if not found)
+    confidence_level = tol_dict.get('Nivel de Confianza', 0.80)
+    # Ensure confidence level is within reasonable bounds (0.5 to 0.99)
+    confidence_level = max(0.50, min(0.99, confidence_level))
+    
+    # Calculate Coverage Factor k for a Normal Distribution (two-sided)
+    # e.g. for 80% confidence, k = 1.28
+    # e.g. for 95% confidence, k = 1.96
+    k_factor = stats.norm.ppf(1 - (1 - confidence_level) / 2)
+    
     default_tol = 0.10
     
     # Vectorized initialization
@@ -130,16 +142,9 @@ def run_simulation(dfs, ili_date, target_date, tolerances_df, detection_threshol
     # map defect types to tolerance values
     defect_types = master_df['tipo_defecto'].fillna('GENE')
     ili_tols_fraction = defect_types.map(tol_dict).fillna(default_tol).values
-    # ILI Std Dev = Tolerance * Depth? Or Tolerance * Thickness? OR just Tolerance (which is 10%... of what?)
-    # "Tolerancias de dimensionamiento... 10%". Usually means +/- 10% of Depth with 80% confidence -> implies std dev logic.
-    # Common industry standard: Tolerance = 3 * StdDev? 
-    # Or Tolerance is the Std Dev itself?
-    # Requirement: "Tabla para ingresar tolerancias (desviacion estandar directa)"
-    # Ah, explicit! "Tolerance IS the direct standard deviation" (fractional or absolute?)
-    # "General | 10%". This implies 10% of Depth.
-    # Let's assume StdDev = Value * Depth.
-    
-    ili_std_devs = ili_tols_fraction * master_df['espesor'].values
+    # ILI Std Dev calculation adjusted by k_factor
+    # sigma = (Tolerance * Thickness) / k_factor
+    ili_std_devs = (ili_tols_fraction * master_df['espesor'].values) / k_factor
     
     # 3. ML Data (where no field and no ILI)
     # Censored Logic (Truncated Normal) occurs here?

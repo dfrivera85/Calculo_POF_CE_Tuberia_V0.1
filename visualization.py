@@ -133,15 +133,15 @@ def main():
             
             # Default Tolerances Table
             default_tolerances = pd.DataFrame({
-                "Defect Type": ["GENE", "PITT", "AXGR", "CIGR", "PINH", "AXSL", "CISL"],
-                "Tolerance": [0.10, 0.10, 0.15, 0.15, 0.10, 0.15, 0.10]
+                "Defect Type": ["GENE", "PITT", "AXGR", "CIGR", "PINH", "AXSL", "CISL", "Nivel de Confianza"],
+                "Tolerance": [0.10, 0.10, 0.15, 0.15, 0.10, 0.15, 0.10, 0.80]
             })
             
             tolerances_df = st.data_editor(
                 default_tolerances,
                 column_config={
                     "Tolerance": st.column_config.NumberColumn(
-                        "Std Dev (%)",
+                        "Valor (%)",
                         min_value=0.0,
                         max_value=1.0,
                         step=0.01,
@@ -150,7 +150,7 @@ def main():
                 },
                 hide_index=True,
                 use_container_width=True,
-                height=250
+                height=(len(default_tolerances) + 1) * 35 + 3
             )
         st.divider()
 
