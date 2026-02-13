@@ -170,34 +170,38 @@ def main():
         
         with col_input4:
             st.subheader("Desviaciones ILI-Campo")
-            st.file_uploader("Cargue desviaciones ILI-Campo Actual", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de validación de ILI (Dataframe).")
-            st.file_uploader("Cargue desviaciones ILI-Campo Previo 1", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de validación de ILI (Dataframe).")
-            st.file_uploader("Cargue desviaciones ILI-Campo Previo 2", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de validación de ILI (Dataframe).")
-            st.file_uploader("Cargue desviaciones ILI-Campo Previo 3", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de validación de ILI (Dataframe).")
+            ili_validation_file_actual = st.file_uploader("Cargue desviaciones ILI-Campo Actual", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de validación de ILI (Dataframe).")
+            ili_validation_file_previo1 = st.file_uploader("Cargue desviaciones ILI-Campo Previo 1", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de validación de ILI (Dataframe).")
+            ili_validation_file_previo2 = st.file_uploader("Cargue desviaciones ILI-Campo Previo 2", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de validación de ILI (Dataframe).")
+            ili_validation_file_previo3 = st.file_uploader("Cargue desviaciones ILI-Campo Previo 3", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de validación de ILI (Dataframe).")
 
         with col_input5:
             st.subheader("Validacion ILI (Nivel 2 y 3)")
             col_input5_1, col_input5_2 = st.columns([0.5, 0.5], vertical_alignment="center")
             with col_input5_1:
-                st.button("Validar ILI Actual")
+                st.button("Validar ILI Actual", disabled=(ili_validation_file_actual is None))
+                st.button("Calibrar ILI Actual")
             with col_input5_2:
                 st.image("CSV Examples/test.jpg")
             
             col_input5_3, col_input5_4 = st.columns([0.5, 0.5], vertical_alignment="center")
             with col_input5_3:
-                st.button("Validar ILI Previo 1")
+                st.button("Validar ILI Previo 1", disabled=(ili_validation_file_previo1 is None))
+                st.button("Calibrar ILI Previo 1")
             with col_input5_4:
                 st.image("CSV Examples/test.jpg")
 
             col_input5_5, col_input5_6 = st.columns([0.5, 0.5], vertical_alignment="center")
             with col_input5_5:
-                st.button("Validar ILI Previo 2")
+                st.button("Validar ILI Previo 2", disabled=(ili_validation_file_previo2 is None))
+                st.button("Calibrar ILI Previo 2")
             with col_input5_6:
                 st.image("CSV Examples/test.jpg")
 
             col_input5_7, col_input5_8 = st.columns([0.5, 0.5], vertical_alignment="center")
             with col_input5_7:
-                st.button("Validar ILI Previo 3")
+                st.button("Validar ILI Previo 3", disabled=(ili_validation_file_previo3 is None))
+                st.button("Calibrar ILI Previo 3")
             with col_input5_8:
                 st.image("CSV Examples/test.jpg")
 
@@ -237,7 +241,7 @@ def main():
                     # 1. Load Data
                     dfs = data_loader.load_data_from_dict(file_dict)
                     st.toast("Datos cargados exitosamente", icon="✅")
-                    
+                                        
                     # 2. Run Simulation
                     st.info("Ejecutando simulación... Esto puede tomar un momento.")
                     results = orchestration_module.run_simulation(dfs, ili_date, target_date, tolerances_df, detection_threshold)
