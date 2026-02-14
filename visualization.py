@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 # Import local modules
 import data_loader
 import main as orchestration_module  # Orchestration module
+import ili_validation # New validation module
 
 # Set Page Config
 st.set_page_config(
@@ -163,26 +164,70 @@ def main():
             pipetally_actual_file = st.file_uploader("Cargue el archivo de Pipetally Actual", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de anomalías (Dataframe).")
             if pipetally_actual_file:
                 file_dict['anomalias.csv'] = pipetally_actual_file
+            st.divider()
 
             st.file_uploader("Cargue el archivo de Pipetally Previo 1", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de anomalías (Dataframe).")
+            st.divider()
             st.file_uploader("Cargue el archivo de Pipetally Previo 2", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de anomalías (Dataframe).")
+            st.divider()
             st.file_uploader("Cargue el archivo de Pipetally Previo 3", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de anomalías (Dataframe).")
+            st.divider()
         
         with col_input4:
             st.subheader("Desviaciones ILI-Campo")
             ili_validation_file_actual = st.file_uploader("Cargue desviaciones ILI-Campo Actual", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de validación de ILI (Dataframe).")
+            st.divider()
             ili_validation_file_previo1 = st.file_uploader("Cargue desviaciones ILI-Campo Previo 1", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de validación de ILI (Dataframe).")
+            st.divider()
             ili_validation_file_previo2 = st.file_uploader("Cargue desviaciones ILI-Campo Previo 2", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de validación de ILI (Dataframe).")
+            st.divider()
             ili_validation_file_previo3 = st.file_uploader("Cargue desviaciones ILI-Campo Previo 3", type="csv", help="Cargue aquí el archivo CSV que contiene el reporte de validación de ILI (Dataframe).")
+            st.divider()
 
         with col_input5:
             st.subheader("Validacion ILI (Nivel 2 y 3)")
             col_input5_1, col_input5_2 = st.columns([0.5, 0.5], vertical_alignment="center")
             with col_input5_1:
-                st.button("Validar ILI Actual", disabled=(ili_validation_file_actual is None))
+                run_ili_validation = st.button("Validar ILI Actual", disabled=(ili_validation_file_actual is None))
                 st.button("Calibrar ILI Actual")
-            with col_input5_2:
-                st.image("CSV Examples/test.jpg")
+            st.divider()
+            # Logic for Validation Button
+            if run_ili_validation and ili_validation_file_actual:
+                try:
+                    # 1. Cargar Datos
+                    df_val = pd.read_csv(ili_validation_file_actual)
+                    
+                    # 2. Validación Nivel 2
+                    validator_l2 = ili_validation.ILIValidationLevel2(ili_tolerance=10.0, ili_certainty=0.80)
+                    df_res, x, n, comb_tol = validator_l2.validate_measurements(df_val)
+                    p_low, p_up, p_est = validator_l2.calculate_confidence_bounds(x, n)
+                    outcome_msg = validator_l2.evaluate_outcome(p_low, p_up)
+                    
+                    # Mostrar Resultados Nivel 2 en col_input5_1
+                    with col_input5_1:
+                        with st.expander("Resultados Nivel 2", expanded=False):
+                            st.caption(f"En tolerancia: {x}/{n} ({x/n:.1%})")
+                            st.caption(f"Certeza Calculada: [{p_low:.1%}, {p_up:.1%}]")
+                            st.caption(f"{outcome_msg}")
+                        # 3. Validación Nivel 3 (con spinner/progress)
+                    with st.spinner("Ejecutando Modelo Bayesiano (API 1163 Nivel 3)...Por favor espere."):
+                        validator_l3 = ili_validation.ILIValidationLevel3()
+                        fig, msg = validator_l3.perform_validation(df_val)
+                    
+                    # Mostrar Gráfica Nivel 3 en col_input5_2
+                    with col_input5_2:
+                        if fig:
+                            st.pyplot(fig)
+                            st.markdown(f"<div style='text-align: center; color: #808495; font-size: 0.8rem;'>{msg}</div>", unsafe_allow_html=True)
+                        else:
+                            st.markdown(f"<div style='text-align: center; color: #808495; font-size: 0.8rem;'>{msg}</div>", unsafe_allow_html=True)
+                            
+                except Exception as e:
+                    st.caption(f"Error en validación: {str(e)}")
+            else:
+                with col_input5_2:
+                    # Default Image if not running
+                    st.image("CSV Examples/test.jpg")
             
             col_input5_3, col_input5_4 = st.columns([0.5, 0.5], vertical_alignment="center")
             with col_input5_3:
